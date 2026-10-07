@@ -1,0 +1,15 @@
+-- amazon_clean_dataset source
+
+CREATE VIEW amazon_clean_dataset AS
+SELECT
+  product_id,
+  product_name,
+  category AS categoria_completa,
+  SUBSTR(category, 1, INSTR(category || '|', '|') - 1) AS categoria_principal,
+  CAST(REPLACE(REPLACE(discounted_price, '₹', ''), ',', '') AS REAL) AS discounted_price_num,
+  CAST(REPLACE(REPLACE(actual_price, '₹', ''), ',', '') AS REAL) AS actual_price_num,
+  CAST(REPLACE(discount_percentage, '%', '') AS REAL) / 100.0 AS discount_pct,
+  CAST(rating AS REAL) AS rating_num,
+  CAST(REPLACE(rating_count, ',', '') AS INTEGER) AS rating_count_num
+FROM amazon
+WHERE rating NOT GLOB '*[^0-9.]*';
